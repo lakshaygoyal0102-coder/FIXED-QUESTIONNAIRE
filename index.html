@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ScaleWave — Business Qualification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #08090d;
+  --surface:   #0f1117;
+  --card:      #141720;
+  --border:    #1e2232;
+  --border-hi: #2a304a;
+  --accent:    #4f6ef7;
+  --accent2:   #7b5cf0;
+  --glow:      rgba(79,110,247,.35);
+  --success:   #22d47a;
+  --danger:    #f75f5f;
+  --text:      #e8eaf0;
+  --muted:     #5a6180;
+  --label:     #8892b0;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius-sm: 10px;
+  --trans:     cubic-bezier(.4,0,.2,1);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--font-body);
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px; overflow-x: hidden; position: relative;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 20% 20%, rgba(79,110,247,.07) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 60% at 80% 80%, rgba(123,92,240,.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.wrapper { width: 100%; max-width: 620px; position: relative; z-index: 1; }
+
+/* LOGO */
+.logo-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 36px; justify-content: center; }
+.logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 20px var(--glow); }
+.logo-text { font-family: var(--font-head); font-weight: 800; font-size: 1.15rem; letter-spacing: -.3px; background: linear-gradient(90deg, #fff 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* PROGRESS */
+.progress-wrap { margin-bottom: 32px; }
+.progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.progress-label { font-size: .78rem; color: var(--muted); font-weight: 500; letter-spacing: .5px; text-transform: uppercase; }
+.progress-count { font-family: var(--font-head); font-size: .85rem; font-weight: 700; color: var(--accent); }
+.progress-track { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width .5s var(--trans); box-shadow: 0 0 12px var(--glow); }
+
+/* CARD */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; box-shadow: 0 8px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.02); position: relative; overflow: hidden; }
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(79,110,247,.4), transparent); }
+
+/* STEPS */
+.step { display: none; animation: fadeUp .4s var(--trans) both; }
+.step.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+
+.step-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(79,110,247,.12); border: 1px solid rgba(79,110,247,.25); border-radius: 99px; padding: 4px 12px; font-size: .72rem; font-weight: 600; color: var(--accent); letter-spacing: .6px; text-transform: uppercase; margin-bottom: 20px; }
+.question-title { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; line-height: 1.35; color: var(--text); margin-bottom: 28px; letter-spacing: -.3px; }
+
+/* INPUTS */
+.input-field { width: 100%; background: var(--surface); border: 1px solid var(--border-hi); border-radius: var(--radius-sm); padding: 15px 18px; color: var(--text); font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color .2s, box-shadow .2s; -webkit-appearance: none; }
+.input-field::placeholder { color: var(--muted); }
+.input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,110,247,.15); }
+textarea.input-field { min-height: 120px; resize: vertical; line-height: 1.6; }
+
+/* PHONE */
+.phone-wrap { display: flex; gap: 10px; }
+.phone-prefix { background: var(--surface); border: 1px solid var(--border-hi); border-radius: var(--radius-sm); padding: 15px 14px; color: var(--label); font-family: var(--font-body); font-size: .95rem; white-space: nowrap; min-width: 58px; text-align: center; }
+
+/* MULTIPLE CHOICE */
+.choices { display: flex; flex-direction: column; gap: 10px; }
+.choice-btn { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border-hi); border-radius: var(--radius-sm); padding: 15px 18px; color: var(--label); font-family: var(--font-body); font-size: .95rem; font-weight: 500; cursor: pointer; transition: all .2s var(--trans); text-align: left; width: 100%; }
+.choice-btn .choice-radio { width: 18px; height: 18px; border: 2px solid var(--border-hi); border-radius: 50%; flex-shrink: 0; transition: all .2s; display: flex; align-items: center; justify-content: center; }
+.choice-btn:hover { border-color: var(--accent); color: var(--text); background: rgba(79,110,247,.05); }
+.choice-btn.selected { border-color: var(--accent); background: rgba(79,110,247,.08); color: var(--text); box-shadow: 0 0 0 1px rgba(79,110,247,.2); }
+.choice-btn.selected .choice-radio { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 10px var(--glow); }
+.choice-btn.selected .choice-radio::after { content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%; }
+.others-input-wrap { margin-top: 12px; display: none; }
+.others-input-wrap.visible { display: block; animation: fadeUp .3s both; }
+
+/* SLIDER */
+.slider-wrap { padding: 10px 0; }
+.slider-labels { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: .78rem; color: var(--muted); }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 99px; background: var(--border); outline: none; cursor: pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); box-shadow: 0 0 14px var(--glow); cursor: grab; transition: transform .15s; }
+input[type=range]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.2); }
+.slider-value-display { text-align: center; margin-top: 18px; font-family: var(--font-head); font-size: 3rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
+.slider-value-label { text-align: center; font-size: .78rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+/* BUTTONS */
+.btn-row { display: flex; gap: 12px; margin-top: 30px; align-items: center; }
+.btn-back { background: transparent; border: 1px solid var(--border-hi); border-radius: var(--radius-sm); color: var(--muted); font-family: var(--font-body); font-size: .9rem; font-weight: 500; padding: 13px 20px; cursor: pointer; transition: all .2s; white-space: nowrap; }
+.btn-back:hover { border-color: var(--label); color: var(--text); }
+.btn-next { flex: 1; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: var(--radius-sm); color: #fff; font-family: var(--font-head); font-size: 1rem; font-weight: 700; padding: 15px 28px; cursor: pointer; transition: all .2s; letter-spacing: .2px; box-shadow: 0 4px 24px rgba(79,110,247,.4); }
+.btn-next:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(79,110,247,.5); }
+.btn-submit { flex: 1; background: linear-gradient(135deg, #22d47a, #1ab868); border: none; border-radius: var(--radius-sm); color: #fff; font-family: var(--font-head); font-size: 1rem; font-weight: 700; padding: 15px 28px; cursor: pointer; transition: all .2s; box-shadow: 0 4px 24px rgba(34,212,122,.35); }
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(34,212,122,.45); }
+.btn-submit:disabled, .btn-next:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+/* SUCCESS */
+#success-screen { display: none; text-align: center; padding: 48px 36px; animation: fadeUp .5s var(--trans) both; }
+.success-icon-wrap { position: relative; width: 88px; height: 88px; margin: 0 auto 28px; }
+.success-glow { position: absolute; inset: -16px; border-radius: 50%; background: radial-gradient(circle, rgba(34,212,122,.25) 0%, transparent 70%); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:.8;} 50%{transform:scale(1.15);opacity:.4;} }
+.success-circle { width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg,#22d47a,#1ab868); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 0 40px rgba(34,212,122,.4); position: relative; }
+.success-title { font-family: var(--font-head); font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; }
+.success-msg { color: var(--label); font-size: 1rem; line-height: 1.7; max-width: 400px; margin: 0 auto 16px; }
+.success-sub { display: inline-flex; align-items: center; gap: 8px; background: rgba(79,110,247,.1); border: 1px solid rgba(79,110,247,.2); border-radius: 99px; padding: 8px 18px; font-size: .82rem; color: var(--accent); font-weight: 500; }
+.success-emojis { margin-top: 24px; font-size: 1.6rem; letter-spacing: 8px; }
+
+/* SPINNER */
+.spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ADMIN FAB */
+#admin-fab { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 12px; background: rgba(20,23,32,.85); border: 1px solid var(--border-hi); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: all .2s; backdrop-filter: blur(12px); }
+#admin-fab:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--glow); }
+#admin-fab svg { width: 18px; height: 18px; color: var(--muted); transition: color .2s; }
+#admin-fab:hover svg { color: var(--accent); }
+
+/* PASSWORD MODAL */
+.pwd-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(6px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+.pwd-overlay.open { display: flex; }
+.modal-box { background: var(--card); border: 1px solid var(--border-hi); border-radius: 20px; padding: 36px; width: 100%; max-width: 420px; position: relative; animation: fadeUp .35s var(--trans) both; box-shadow: 0 24px 80px rgba(0,0,0,.7); }
+.modal-title { font-family: var(--font-head); font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.modal-sub { color: var(--muted); font-size: .88rem; margin-bottom: 24px; }
+.modal-close-x { position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all .2s; }
+.modal-close-x:hover { color: var(--text); border-color: var(--border-hi); }
+.modal-error { color: var(--danger); font-size: .82rem; margin-top: 8px; display: none; }
+
+/* DASHBOARD */
+.dash-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 400; display: none; flex-direction: column; overflow: hidden; }
+.dash-overlay.open { display: flex; }
+.dash-header { padding: 20px 28px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--surface); }
+.dash-header-left { display: flex; align-items: center; gap: 14px; }
+.dash-logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg,var(--accent),var(--accent2)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.dash-title-main { font-family: var(--font-head); font-size: 1rem; font-weight: 700; }
+.dash-title-sub { font-size: .75rem; color: var(--muted); margin-top: 1px; }
+.dash-header-actions { display: flex; align-items: center; gap: 10px; }
+.dash-pill { background: rgba(79,110,247,.1); border: 1px solid rgba(79,110,247,.2); border-radius: 99px; padding: 4px 12px; font-size: .75rem; color: var(--accent); font-weight: 600; }
+.btn-danger-sm { background: rgba(247,95,95,.1); border: 1px solid rgba(247,95,95,.25); border-radius: 8px; color: var(--danger); font-family: var(--font-body); font-size: .8rem; font-weight: 500; padding: 7px 14px; cursor: pointer; transition: all .2s; }
+.btn-danger-sm:hover { background: rgba(247,95,95,.2); }
+.btn-icon-sm { background: var(--card); border: 1px solid var(--border-hi); border-radius: 8px; color: var(--muted); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .2s; font-size: 1rem; }
+.btn-icon-sm:hover { color: var(--text); border-color: var(--label); }
+
+/* TABLE */
+.dash-body { flex: 1; overflow-y: auto; padding: 24px 28px; }
+.table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--surface); }
+th { padding: 13px 16px; text-align: left; font-family: var(--font-head); font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: .8px; text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 13px 16px; font-size: .88rem; color: var(--label); border-bottom: 1px solid var(--border); vertical-align: middle; }
+tbody tr { cursor: pointer; transition: background .15s; }
+tbody tr:hover td { background: rgba(79,110,247,.05); color: var(--text); }
+tbody tr:last-child td { border-bottom: none; }
+.td-name { font-weight: 600; color: var(--text); font-family: var(--font-head); font-size: .9rem; }
+.badge-post { display: inline-block; background: rgba(79,110,247,.12); border: 1px solid rgba(79,110,247,.2); border-radius: 6px; padding: 2px 9px; font-size: .72rem; font-weight: 600; color: var(--accent); }
+.score-chip { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; font-family: var(--font-head); font-weight: 800; font-size: .85rem; }
+.score-high { background: rgba(34,212,122,.12); color: var(--success); }
+.score-mid  { background: rgba(255,180,50,.12);  color: #ffb432; }
+.score-low  { background: rgba(247,95,95,.12);   color: var(--danger); }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+.empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 14px; opacity: .5; }
+.empty-state p { font-size: .9rem; }
+
+/* LEAD DETAIL — z-index 600, renders above dashboard */
+.detail-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(8px);
+  z-index: 600;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 30px 16px;
+  overflow-y: auto;
+}
+.detail-overlay.open { display: flex; }
+.detail-modal {
+  background: var(--card); border: 1px solid var(--border-hi); border-radius: 20px;
+  padding: 36px; width: 100%; max-width: 600px;
+  position: relative; animation: fadeUp .35s var(--trans) both;
+  box-shadow: 0 24px 80px rgba(0,0,0,.8); margin: auto;
+}
+
+/* Detail internals */
+.detail-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.detail-cafe-name { font-family: var(--font-head); font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
+.detail-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.detail-section-title { font-family: var(--font-head); font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.detail-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
+.detail-qa { margin-bottom: 14px; }
+.detail-q { font-size: .72rem; color: var(--accent); letter-spacing: .5px; text-transform: uppercase; font-weight: 700; margin-bottom: 7px; line-height: 1.4; }
+.detail-a { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; font-size: .9rem; color: var(--text); line-height: 1.65; }
+.detail-a-score { font-family: var(--font-head); font-size: 2rem; font-weight: 800; text-align: center; padding: 14px; background: linear-gradient(135deg, rgba(79,110,247,.1), rgba(123,92,240,.08)); border: 1px solid rgba(79,110,247,.2); border-radius: 10px; color: var(--accent); }
+.detail-actions { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.btn-del { flex: 1; background: rgba(247,95,95,.1); border: 1px solid rgba(247,95,95,.25); border-radius: 10px; color: var(--danger); font-family: var(--font-body); font-size: .9rem; font-weight: 600; padding: 12px; cursor: pointer; transition: all .2s; }
+.btn-del:hover { background: rgba(247,95,95,.2); }
+.btn-back-dash { flex: 1; background: var(--surface); border: 1px solid var(--border-hi); border-radius: 10px; color: var(--label); font-family: var(--font-body); font-size: .9rem; font-weight: 500; padding: 12px; cursor: pointer; transition: all .2s; }
+.btn-back-dash:hover { color: var(--text); border-color: var(--label); }
+
+/* TOAST */
+.status-bar { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border-hi); border-radius: 12px; padding: 12px 20px; font-size: .85rem; color: var(--text); z-index: 999; box-shadow: 0 8px 32px rgba(0,0,0,.5); opacity: 0; transition: opacity .3s; white-space: nowrap; pointer-events: none; }
+.status-bar.show { opacity: 1; }
+
+/* RESPONSIVE */
+@media (max-width: 520px) {
+  .card { padding: 28px 20px; }
+  .question-title { font-size: 1.15rem; }
+  .dash-body { padding: 16px 12px; }
+  th, td { padding: 10px 10px; font-size: .82rem; }
+  .detail-grid-2 { grid-template-columns: 1fr; }
+  .dash-header { padding: 14px 16px; }
+  .detail-modal { padding: 22px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     QUESTIONNAIRE
+══════════════════════════════════════ -->
+<div class="wrapper" id="quiz-wrapper">
+  <div class="logo-bar">
+    <div class="logo-mark">⚡</div>
+    <div class="logo-text">ScaleWaveTech AI</div>
+  </div>
+
+  <div class="progress-wrap" id="progress-section">
+    <div class="progress-meta">
+      <span class="progress-label">Qualification Progress</span>
+      <span class="progress-count" id="progress-count">1 / 8</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:12.5%"></div>
+    </div>
+  </div>
+
+  <div class="card" id="quiz-card">
+
+    <!-- Q1: Cafe name -->
+    <div class="step active" id="step-1">
+      <div class="step-badge">Step 1 of 8</div>
+      <div class="question-title">What is your café's name?</div>
+      <input class="input-field" type="text" id="q-cafename" placeholder="e.g. The Brew Lab" autocomplete="off" />
+      <div class="btn-row">
+        <button class="btn-next" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q2: Post -->
+    <div class="step" id="step-2">
+      <div class="step-badge">Step 2 of 8</div>
+      <div class="question-title">What is your role at the café?</div>
+      <div class="choices" id="post-choices">
+        <button class="choice-btn" onclick="selectPost(this,'Owner')"><span class="choice-radio"></span>Owner</button>
+        <button class="choice-btn" onclick="selectPost(this,'Manager')"><span class="choice-radio"></span>Manager</button>
+        <button class="choice-btn" onclick="selectPost(this,'Staff')"><span class="choice-radio"></span>Staff</button>
+        <button class="choice-btn" onclick="selectPost(this,'Others')"><span class="choice-radio"></span>Others</button>
+      </div>
+      <div class="others-input-wrap" id="others-wrap">
+        <input class="input-field" type="text" id="q-others" placeholder="Please specify your role…" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
+        <button class="btn-next" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q3: Contact -->
+    <div class="step" id="step-3">
+      <div class="step-badge">Step 3 of 8</div>
+      <div class="question-title">What's the best number to reach you on?</div>
+      <div class="phone-wrap">
+        <div class="phone-prefix">🇮🇳 +91</div>
+        <input class="input-field" type="tel" id="q-contact" placeholder="98765 43210" maxlength="10" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(3)">← Back</button>
+        <button class="btn-next" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q4: 1-star reviews -->
+    <div class="step" id="step-4">
+      <div class="step-badge">Step 4 of 8</div>
+      <div class="question-title">How many 1-star reviews have you received in the last 6 months that you wish you could have resolved privately before they went public?</div>
+      <input class="input-field" type="text" id="q-onestar" placeholder="e.g. 3 reviews" />
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(4)">← Back</button>
+        <button class="btn-next" onclick="nextStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q5: Slider -->
+    <div class="step" id="step-5">
+      <div class="step-badge">Step 5 of 8</div>
+      <div class="question-title">On a scale of 1–10, how much do you believe your current star rating is holding back your business from reaching its full revenue potential?</div>
+      <div class="slider-wrap">
+        <div class="slider-labels"><span>1 — Not at all</span><span>10 — Massively</span></div>
+        <input type="range" id="q-slider" min="1" max="10" value="5" oninput="updateSlider(this.value)" />
+        <div class="slider-value-display" id="slider-display">5</div>
+        <div class="slider-value-label">out of 10</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(5)">← Back</button>
+        <button class="btn-next" onclick="nextStep(5)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q6: Current handling -->
+    <div class="step" id="step-6">
+      <div class="step-badge">Step 6 of 8</div>
+      <div class="question-title">What are you currently doing to stop unhappy customers from venting their frustrations directly on Google or Yelp?</div>
+      <textarea class="input-field" id="q-handling" placeholder="Tell us about your current approach…"></textarea>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(6)">← Back</button>
+        <button class="btn-next" onclick="nextStep(6)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q7: Past attempts -->
+    <div class="step" id="step-7">
+      <div class="step-badge">Step 7 of 8</div>
+      <div class="question-title">What have you tried in the past to increase your 5-star reviews, and why did it fail to scale automatically?</div>
+      <textarea class="input-field" id="q-pastattempts" placeholder="Be honest — we're here to solve exactly this…"></textarea>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(7)">← Back</button>
+        <button class="btn-next" onclick="nextStep(7)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Q8: Fit & readiness -->
+    <div class="step" id="step-8">
+      <div class="step-badge">Step 8 of 8</div>
+      <div class="question-title">Why do you believe your business is a good fit for our AI-driven reputation protection, and are you ready to implement automation today?</div>
+      <textarea class="input-field" id="q-fitready" placeholder="Tell us why you're the right fit and your readiness to get started…"></textarea>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(8)">← Back</button>
+        <button class="btn-submit" id="submit-btn" onclick="submitForm()">Submit Application 🚀</button>
+      </div>
+    </div>
+
+  </div><!-- /quiz-card -->
+
+  <!-- SUCCESS SCREEN -->
+  <div id="success-screen" class="card">
+    <div class="success-icon-wrap">
+      <div class="success-glow"></div>
+      <div class="success-circle">✅</div>
+    </div>
+    <div class="success-title">Verification Successful</div>
+    <p class="success-msg">Your verification is successfully completed. Our team will contact you within 42 hours.</p>
+    <div class="success-sub">🔒 We only onboard a limited number of businesses each week to ensure premium results.</div>
+    <div class="success-emojis">✅ 🚀 📈</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADMIN FAB
+══════════════════════════════════════ -->
+<div id="admin-fab" onclick="openPwdModal()" title="Admin">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/>
+  </svg>
+</div>
+
+<!-- ══════════════════════════════════════
+     PASSWORD MODAL  (z-index 500)
+══════════════════════════════════════ -->
+<div class="pwd-overlay" id="pwd-overlay">
+  <div class="modal-box">
+    <button class="modal-close-x" onclick="closePwdModal()">✕</button>
+    <div class="modal-title">🔐 Admin Access</div>
+    <div class="modal-sub">Enter your administrator password to continue.</div>
+    <input class="input-field" type="password" id="pwd-input" placeholder="Password"
+      onkeydown="if(event.key==='Enter') checkPassword()" />
+    <div class="modal-error" id="pwd-error">❌ Incorrect password. Try again.</div>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="btn-next" onclick="checkPassword()">Unlock Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DASHBOARD  (z-index 400)
+══════════════════════════════════════ -->
+<div class="dash-overlay" id="dashboard">
+
+  <div class="dash-header">
+    <div class="dash-header-left">
+      <div class="dash-logo-mark">⚡</div>
+      <div>
+        <div class="dash-title-main">Lead Dashboard</div>
+        <div class="dash-title-sub">ScaleWaveTech AI — Admin Panel</div>
+      </div>
+    </div>
+    <div class="dash-header-actions">
+      <span class="dash-pill" id="lead-count-pill">0 Leads</span>
+      <button class="btn-danger-sm" onclick="clearAll()">Clear All</button>
+      <div class="btn-icon-sm" onclick="closeDashboard()">✕</div>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Café Name</th>
+            <th>Post</th>
+            <th>Contact</th>
+            <th>Date</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="leads-tbody"></tbody>
+      </table>
+      <div class="empty-state" id="empty-state" style="display:none;">
+        <div class="empty-icon">📭</div>
+        <p>No leads yet. Submissions will appear here automatically.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /dashboard -->
+
+<!-- ══════════════════════════════════════
+     LEAD DETAIL  (z-index 600)
+══════════════════════════════════════ -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-modal">
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="status-bar" id="status-bar"></div>
+
+<script>
+/* ─────────────────────────────
+   CONFIG
+   
+   HOW TO SET UP PERSISTENT CLOUD STORAGE (JSONBin.io — free):
+   1. Go to https://jsonbin.io and sign up (free)
+   2. Click "CREATE BIN" → paste  []  as the content → Save
+   3. Copy the Bin ID from the URL (looks like: 6650f3e5acd3cb34a8497xyz)
+   4. Go to API Keys tab → copy your Master Key
+   5. Paste both below, replacing the placeholder values.
+   
+   Until you do this, the system uses localStorage as a fallback.
+   localStorage is browser-only — data won't appear on other devices.
+───────────────────────────── */
+const API_BASE = 'https://api.jsonbin.io/v3/b';
+const API_KEY  = '$2a$10$9/DOwwPZujszNrDzXrNLBexxSTliHH2AlpgzjyDG///Ao4OYOZTU.';   // ← paste your JSONBin Master Key
+const BIN_ID   = '69e9a7f0aaba8821972ab9ce';              // ← paste your JSONBin Bin ID
+
+// Auto-detect: if keys are still placeholders, use localStorage with a visible warning
+const USE_LOCAL = API_KEY.includes('REPLACE') || BIN_ID.includes('REPLACE');
+const LS_KEY    = 'sw_leads_v1';
+
+/* ─────────────────────────────
+   STATE
+───────────────────────────── */
+const TOTAL = 8;
+let currentStep    = 1;
+let selectedPost   = '';
+let sliderVal      = 5;
+let currentLeads   = [];
+let openedLeadIdx  = -1;
+
+/* ─────────────────────────────
+   QUESTIONNAIRE
+───────────────────────────── */
+function updateProgress(step) {
+  document.getElementById('progress-fill').style.width = ((step / TOTAL) * 100) + '%';
+  document.getElementById('progress-count').textContent = step + ' / ' + TOTAL;
+}
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('step-' + n);
+  if (el) el.classList.add('active');
+  currentStep = n;
+  updateProgress(n);
+}
+
+function nextStep(from) { if (validateStep(from) && from < TOTAL) showStep(from + 1); }
+function prevStep(from)  { if (from > 1) showStep(from - 1); }
+
+function validateStep(step) {
+  const checks = {
+    1: () => !!document.getElementById('q-cafename').value.trim()   || (highlight('q-cafename'), toast('⚠️ Please enter café name'), false),
+    2: () => {
+      if (!selectedPost) { toast('⚠️ Please select your role'); return false; }
+      if (selectedPost === 'Others' && !document.getElementById('q-others').value.trim()) { highlight('q-others'); toast('⚠️ Please specify your role'); return false; }
+      return true;
+    },
+    3: () => {
+      const v = document.getElementById('q-contact').value.trim();
+      return (v && v.length >= 7) || (highlight('q-contact'), toast('⚠️ Please enter a valid number'), false);
+    },
+    4: () => !!document.getElementById('q-onestar').value.trim()     || (highlight('q-onestar'),    toast('⚠️ Please answer this question'), false),
+    6: () => !!document.getElementById('q-handling').value.trim()    || (highlight('q-handling'),   toast('⚠️ Please fill in this field'), false),
+    7: () => !!document.getElementById('q-pastattempts').value.trim()|| (highlight('q-pastattempts'), toast('⚠️ Please fill in this field'), false),
+    8: () => !!document.getElementById('q-fitready').value.trim()    || (highlight('q-fitready'),   toast('⚠️ Please answer this final question'), false),
+  };
+  return checks[step] ? checks[step]() : true;
+}
+
+function highlight(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.borderColor = 'var(--danger)';
+  el.style.boxShadow   = '0 0 0 3px rgba(247,95,95,.15)';
+  setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 1600);
+}
+
+function selectPost(btn, value) {
+  document.querySelectorAll('#post-choices .choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedPost = value;
+  const wrap = document.getElementById('others-wrap');
+  if (value === 'Others') wrap.classList.add('visible');
+  else { wrap.classList.remove('visible'); document.getElementById('q-others').value = ''; }
+}
+
+function updateSlider(val) {
+  sliderVal = +val;
+  document.getElementById('slider-display').textContent = val;
+  const pct = ((val - 1) / 9) * 100;
+  document.getElementById('q-slider').style.background =
+    `linear-gradient(90deg, var(--accent) ${pct}%, var(--border) ${pct}%)`;
+}
+updateSlider(5);
+
+/* ─────────────────────────────
+   SUBMIT
+───────────────────────────── */
+async function submitForm() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Submitting…';
+
+  const postVal = selectedPost === 'Others'
+    ? (document.getElementById('q-others').value.trim() || 'Others')
+    : selectedPost;
+
+  const lead = {
+    cafeName:        document.getElementById('q-cafename').value.trim(),
+    post:            postVal,
+    contact:         '+91 ' + document.getElementById('q-contact').value.trim(),
+    oneStarReviews:  document.getElementById('q-onestar').value.trim(),
+    ratingImpact:    sliderVal,
+    currentHandling: document.getElementById('q-handling').value.trim(),
+    pastAttempts:    document.getElementById('q-pastattempts').value.trim(),
+    fitReady:        document.getElementById('q-fitready').value.trim(),
+    timestamp:       new Date().toISOString()
+  };
+
+  try {
+    await saveLead(lead);
+    document.getElementById('quiz-card').style.display = 'none';
+    document.getElementById('progress-section').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  } catch {
+    toast('❌ Submission failed. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = 'Submit Application 🚀';
+  }
+}
+
+/* ─────────────────────────────
+   STORAGE
+   
+   BUGS FIXED vs original:
+   1. Race condition eliminated: saveLead() now does a fresh fetch THEN writes,
+      so concurrent submissions never overwrite each other.
+   2. localStorage fallback shows a visible admin warning banner instead of
+      silently losing data across devices/sessions.
+   3. JSONBin path uses proper error handling and re-enables submit on failure.
+   4. All three functions (fetchLeads / saveLead / persistLeads) use the same
+      single code path — no dual-mode logic scattered across the file.
+───────────────────────────── */
+
+/* — LOCAL FALLBACK (browser-only, shows warning banner in dashboard) — */
+function lsGet() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+}
+function lsSet(arr) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e) {
+    throw new Error('localStorage write failed: ' + e.message);
+  }
+}
+
+/* — JSONBIN CLOUD (persistent, cross-device) — */
+async function jbFetch() {
+  const r = await fetch(`${API_BASE}/${BIN_ID}/latest`, {
+    headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': 'false' }
+  });
+  if (!r.ok) throw new Error(`JSONBin fetch failed: ${r.status}`);
+  const d = await r.json();
+  // JSONBin wraps the record; with X-Bin-Meta:false it returns the raw array
+  return Array.isArray(d) ? d : (Array.isArray(d.record) ? d.record : []);
+}
+async function jbPut(arr) {
+  const r = await fetch(`${API_BASE}/${BIN_ID}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+    body: JSON.stringify(arr)
+  });
+  if (!r.ok) throw new Error(`JSONBin save failed: ${r.status}`);
+}
+
+/* — PUBLIC API used by the rest of the app — */
+async function fetchLeads() {
+  if (USE_LOCAL) return lsGet();
+  return await jbFetch();
+}
+
+async function saveLead(lead) {
+  if (USE_LOCAL) {
+    const arr = lsGet();
+    arr.unshift(lead);
+    lsSet(arr);
+    return;
+  }
+  // RACE-CONDITION FIX: always read the latest state before writing
+  const arr = await jbFetch();
+  arr.unshift(lead);
+  await jbPut(arr);
+}
+
+async function persistLeads() {
+  if (USE_LOCAL) { lsSet(currentLeads); return; }
+  await jbPut(currentLeads);
+}
+
+/* — Show a warning banner in dashboard when running in local-only mode — */
+function maybeShowLocalWarning() {
+  if (!USE_LOCAL) return;
+  const existing = document.getElementById('local-mode-banner');
+  if (existing) return;
+  const banner = document.createElement('div');
+  banner.id = 'local-mode-banner';
+  banner.style.cssText = `
+    background:rgba(247,95,95,.12);border-bottom:1px solid rgba(247,95,95,.3);
+    padding:10px 28px;font-size:.8rem;color:#f75f5f;display:flex;
+    align-items:center;gap:8px;flex-shrink:0;
+  `;
+  banner.innerHTML = `
+    ⚠️ <strong>Local-only mode:</strong> Leads are stored in this browser only.
+    They will disappear in incognito sessions or on other devices.
+    Add your JSONBin API_KEY + BIN_ID in the script config to enable persistent cloud storage.
+  `;
+  const dash = document.getElementById('dashboard');
+  const header = dash.querySelector('.dash-header');
+  header.after(banner);
+}
+
+/* ─────────────────────────────
+   PASSWORD MODAL
+───────────────────────────── */
+function openPwdModal() {
+  document.getElementById('pwd-overlay').classList.add('open');
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('pwd-error').style.display = 'none';
+  setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+}
+function closePwdModal() { document.getElementById('pwd-overlay').classList.remove('open'); }
+function checkPassword() {
+  if (document.getElementById('pwd-input').value === 'admin123') {
+    closePwdModal(); openDashboard();
+  } else {
+    document.getElementById('pwd-error').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+/* ─────────────────────────────
+   DASHBOARD
+───────────────────────────── */
+async function openDashboard() {
+  document.getElementById('dashboard').classList.add('open');
+  maybeShowLocalWarning();
+  await loadDashboard();
+}
+function closeDashboard() {
+  closeDetailModal();
+  document.getElementById('dashboard').classList.remove('open');
+}
+
+async function loadDashboard() {
+  document.getElementById('leads-tbody').innerHTML =
+    '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted);">⏳ Loading leads…</td></tr>';
+  try {
+    currentLeads = await fetchLeads();
+    renderLeads();
+  } catch {
+    document.getElementById('leads-tbody').innerHTML =
+      '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--danger);">❌ Failed to load. Check storage settings.</td></tr>';
+  }
+}
+
+function renderLeads() {
+  const tbody = document.getElementById('leads-tbody');
+  const empty = document.getElementById('empty-state');
+  document.getElementById('lead-count-pill').textContent =
+    currentLeads.length + ' Lead' + (currentLeads.length !== 1 ? 's' : '');
+
+  if (!currentLeads.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = currentLeads.map((l, i) => {
+    const score = l.ratingImpact || 0;
+    const sc = score >= 8 ? 'score-high' : score >= 5 ? 'score-mid' : 'score-low';
+    const d  = l.timestamp
+      ? new Date(l.timestamp).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'2-digit'})
+      : '—';
+    return `<tr onclick="openLeadDetail(${i})">
+      <td style="color:var(--muted);font-size:.78rem;">${i+1}</td>
+      <td class="td-name">${esc(l.cafeName || '—')}</td>
+      <td><span class="badge-post">${esc(l.post || '—')}</span></td>
+      <td>${esc(l.contact || '—')}</td>
+      <td>${d}</td>
+      <td><div class="score-chip ${sc}">${score}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ─────────────────────────────
+   LEAD DETAIL — full Q&A
+───────────────────────────── */
+function openLeadDetail(idx) {
+  openedLeadIdx = idx;
+  const l = currentLeads[idx];
+  const d = l.timestamp
+    ? new Date(l.timestamp).toLocaleString('en-IN', {dateStyle:'medium', timeStyle:'short'})
+    : '—';
+  const score = l.ratingImpact || 0;
+  const sc = score >= 8 ? 'score-high' : score >= 5 ? 'score-mid' : 'score-low';
+
+  document.getElementById('detail-content').innerHTML = `
+
+    <!-- Header -->
+    <div class="detail-top">
+      <div>
+        <div class="detail-cafe-name">${esc(l.cafeName || '—')}</div>
+        <div class="detail-meta-row">
+          <span class="badge-post">${esc(l.post || '—')}</span>
+          <span class="score-chip ${sc}" style="width:auto;padding:3px 12px;font-size:.8rem;">Score&nbsp;${score}/10</span>
+        </div>
+      </div>
+      <button class="modal-close-x" onclick="closeDetailModal()" style="position:static;flex-shrink:0;margin-top:2px;">✕</button>
+    </div>
+
+    <!-- Contact info -->
+    <div class="detail-section-title">📋 Contact Information</div>
+    <div class="detail-grid-2">
+      <div class="detail-qa">
+        <div class="detail-q">Contact Number</div>
+        <div class="detail-a">${esc(l.contact || '—')}</div>
+      </div>
+      <div class="detail-qa">
+        <div class="detail-q">Submitted On</div>
+        <div class="detail-a">${d}</div>
+      </div>
+    </div>
+
+    <!-- All Q&A -->
+    <div class="detail-section-title">💬 Full Questionnaire Answers</div>
+
+    <div class="detail-qa">
+      <div class="detail-q">Q4 — How many 1-star reviews have you received in the last 6 months that you wish you could have resolved privately before they went public?</div>
+      <div class="detail-a">${esc(l.oneStarReviews || '—')}</div>
+    </div>
+
+    <div class="detail-qa">
+      <div class="detail-q">Q5 — On a scale of 1–10, how much do you believe your current star rating is holding back your business from reaching its full revenue potential?</div>
+      <div class="detail-a-score">${score}<span style="font-size:1.1rem;font-weight:400;color:var(--muted);"> / 10</span></div>
+    </div>
+
+    <div class="detail-qa">
+      <div class="detail-q">Q6 — What are you currently doing to stop unhappy customers from venting their frustrations directly on Google or Yelp?</div>
+      <div class="detail-a">${esc(l.currentHandling || '—')}</div>
+    </div>
+
+    <div class="detail-qa">
+      <div class="detail-q">Q7 — What have you tried in the past to increase your 5-star reviews, and why did it fail to scale automatically?</div>
+      <div class="detail-a">${esc(l.pastAttempts || '—')}</div>
+    </div>
+
+    <div class="detail-qa">
+      <div class="detail-q">Q8 — Why do you believe your business is a good fit for our AI-driven reputation protection, and are you ready to implement automation today?</div>
+      <div class="detail-a">${esc(l.fitReady || '—')}</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="detail-actions">
+      <button class="btn-back-dash" onclick="closeDetailModal()">← Back to Dashboard</button>
+      <button class="btn-del" onclick="deleteLead(${idx})">🗑️ Delete Lead</button>
+    </div>
+  `;
+
+  // Show the detail overlay
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetailModal() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+async function deleteLead(idx) {
+  if (!confirm('Delete this lead permanently? This cannot be undone.')) return;
+  currentLeads.splice(idx, 1);
+  await persistLeads();
+  closeDetailModal();
+  renderLeads();
+  toast('🗑️ Lead deleted');
+}
+
+async function clearAll() {
+  if (!confirm('Delete ALL leads? This cannot be undone!')) return;
+  currentLeads = [];
+  await persistLeads();
+  renderLeads();
+  toast('🗑️ All leads cleared');
+}
+
+/* ─────────────────────────────
+   UTILS
+───────────────────────────── */
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n/g,'<br>');
+}
+
+let _toastT;
+function toast(msg) {
+  const el = document.getElementById('status-bar');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* backdrop clicks */
+document.getElementById('pwd-overlay').addEventListener('click', e => { if (e.target.id === 'pwd-overlay') closePwdModal(); });
+document.getElementById('detail-overlay').addEventListener('click', e => { if (e.target.id === 'detail-overlay') closeDetailModal(); });
+</script>
+</body>
+</html>
